@@ -283,7 +283,21 @@
       
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    深度优先和广度优先算法
+    邻接矩阵
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bfs" class="md-nav__link">
+    BFS算法
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dfs" class="md-nav__link">
+    DFS算法
   </a>
   
 </li>
@@ -344,7 +358,21 @@
       
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    深度优先和广度优先算法
+    邻接矩阵
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bfs" class="md-nav__link">
+    BFS算法
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dfs" class="md-nav__link">
+    DFS算法
   </a>
   
 </li>
@@ -369,7 +397,183 @@
 
   <h1>图论</h1>
 
-<h3 id="_1">深度优先和广度优先算法</h3>
+<h3 id="_1">邻接矩阵</h3>
+<pre><code class="language-java">import java.util.*;
+
+class Graph{
+    static void addEdge(ArrayList&lt;ArrayList&lt;Integer&gt;&gt; adj, int u, int v){
+        adj.get(u).add(v);
+        adj.get(v).add(u);
+    }
+
+    /**
+     * 从每个节点开始，打印该节点相邻的点
+     */
+    static void printGraph(ArrayList&lt;ArrayList&lt;Integer&gt;&gt; adj){
+        for (int i = 0; i &lt; adj.size(); i++) {
+            System.out.println(&quot;\nAdjacency list of vertex&quot;
+                               + i);
+            System.out.print(&quot;head&quot;);
+            for (int j = 0; j &lt; adj.get(i).size(); j++) {
+                System.out.print(&quot; -&gt; &quot;
+                                 + adj.get(i).get(j));
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args)
+    {
+        int V = 5;
+        ArrayList&lt;ArrayList&lt;Integer&gt; &gt; adj
+            = new ArrayList&lt;ArrayList&lt;Integer&gt; &gt;(V);
+
+        for (int i = 0; i &lt; V; i++)
+            adj.add(new ArrayList&lt;Integer&gt;());
+
+        addEdge(adj, 0, 1);
+        addEdge(adj, 0, 4);
+        addEdge(adj, 1, 2);
+        addEdge(adj, 1, 3);
+        addEdge(adj, 1, 4);
+        addEdge(adj, 2, 3);
+        addEdge(adj, 3, 4);
+
+        printGraph(adj);
+    }
+}
+</code></pre>
+<h3 id="bfs">BFS算法</h3>
+<p>需要借助一个visited数组来保证遇到环的时候不会无限遍历下去。</p>
+<pre><code class="language-java">import java.io.*;
+import java.util.*;
+
+class Graph{
+    private int V;
+
+    private LinkedList&lt;Integer&gt; adj[];
+
+    Graph(int v){
+        V = v;
+        adj = new LinkedList[v];
+        for(int i = 0; i &lt; v; i++){
+            adj[i] = new LinkedList&lt;&gt;();
+        }
+    }
+
+    /* *
+     * 一条边 从v到w
+     */
+    void addEdge(int v, int w){
+        adj[v].add(w);
+    }
+
+    // 从点s开始遍历整个图
+    vpid BFS(int s){
+        boolean visited[] = new boolean[V];
+        LinkedList&lt;Integer&gt; queue = new LinkedList&lt;Integer&gt;();
+
+        visited[s] = true;
+        queue.add(s);
+
+        while(!queue.isEmpty()){
+            s = queue.poll();
+            System.out.println(s + &quot; &quot;);
+
+            Iterator&lt;Integer&gt; i = adj[s].listIterator();
+            while(i.hasNext()){
+                int n = i.next();
+                if(!visited[n]){
+                    visited[n] = true;
+                    queue.add(n);
+                }
+            }
+        }
+    }
+
+    public static void main(String args[]){
+        Grapg g = new Graph(4);
+
+        g.addEdge(0,1);
+        g.addEdge(0,2);
+        g.addEdge(1,2);
+        g.addEdge(2,0);
+        g.addEdge(2,3);
+        g.addEdge(3,3);
+
+        System.out.println(&quot;Following is Breadth First Traversal &quot;+
+        &quot;(starting from vertex 2)&quot;);
+
+        g.BFS(2);
+    }
+
+    // Following is Breadth First Traversal (starting from vertex 2) 
+    // 2 0 3 1 
+}
+</code></pre>
+<h3 id="dfs">DFS算法</h3>
+<p>主要算法：
+1. 标记当前节点为访问过后打印当前节点
+2. 遍历所有的邻接节点，如果没有被访问过，则递归遍历。</p>
+<pre><code class="language-java">import java.io.*;
+import java.util.*;
+
+class Graph {
+    private int v;
+
+    private LinkedList&lt;Integer&gt; adj[];
+
+    Graph(int v){
+        V = v;
+        adj = new LinkedList[v];
+        for(int i = 0; i &lt; v; i++){
+            adj[i] = new LinkedList&lt;&gt;();
+        }
+    }
+
+    void addEdge(int v, int w){
+        adj[v].add(w);
+    }
+
+    void DFSUtil(int v, boolean visited[]){
+        visited[v] = true;
+        System.out.println(v + &quot; &quot;);
+
+        Iterator&lt;Integer&gt; i = adj[v].listIterator();
+        while(i.hasNext()){
+            int n = i.next();
+            if(!visited[n]){
+                DFSUtil(n, visited);
+            }
+        }
+    }
+
+    void DFS(int v){
+        boolean visited[] = new boolean[V];
+        DFSUtil(v, visited);
+    }
+
+    public static void main(String args[]){
+        Graph g = new Graph(4);
+
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+        g.addEdge(1, 2);
+        g.addEdge(2, 0);
+        g.addEdge(2, 3);
+        g.addEdge(3, 3);
+
+        System.out.println(
+            &quot;Following is Depth First Traversal &quot;
+            + &quot;(starting from vertex 2)&quot;);
+
+        g.DFS(2);
+
+        // Following is Depth First Traversal (starting from vertex 2)
+        // 2 0 1 3
+    }
+}
+</code></pre>
 
 
 
